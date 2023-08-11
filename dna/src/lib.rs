@@ -62,17 +62,66 @@ impl FromStr for Nuc {
     }
 }
 
+/// Module for packed DNA 
+pub mod packed {
+    use super::Nuc;
+    
+    
+    /// A packed DNA sequence (Vector of Nuc)
+    pub struct PackedDna(Vec<Nuc>);
+    
+    impl PackedDna {
+        /// New Packed DNA
+        pub fn from_iterator<I>(iterator: I) -> Self
+        where
+            I: IntoIterator<Item = Nuc>,
+        {
+            Self(iterator.into_iter().collect())
+        }
+    
+        /// Get the Nuc at a particular index
+        pub fn get(&self, idx: usize) -> Nuc {
+            self.0[idx]
+        }
+    }
+
+    impl IntoIterator for PackedDna {
+        type Item = Nuc;
+        type IntoIter = std::vec::IntoIter<Nuc>;
+    
+        fn into_iter(self) -> Self::IntoIter {
+            self.0.into_iter()
+        }
+    }
+    
+}
+
 #[cfg(test)]
 mod tests {
-    // TODO: fill in tests
+    use super::{Nuc, PackedDna};
+    use std::convert::TryFrom;
+    
+    #[test]
+    fn packed_dna_from_iterator() {
+        let nucs = vec![Nuc::A, Nuc::C, Nuc::G, Nuc::T];
+        let packed_dna = PackedDna::from_iterator(nucs.iter().cloned());
+        assert_eq!(packed_dna.get(0), Nuc::A);
+        assert_eq!(packed_dna.get(1), Nuc::C);
+        assert_eq!(packed_dna.get(2), Nuc::G);
+        assert_eq!(packed_dna.get(3), Nuc::T);
+    }
 
     #[test]
     fn tryfrom_char() {
-        assert!(false);
+        let c: char = 'A';
+        let nuc = Nuc::try_from(c).unwrap();
+        assert_eq!(nuc, Nuc::A);
     }
 
     #[test]
     fn fromstr() {
-        assert!(false);
+        let s: String = String::from_str("A");
+        let nuc = Nuc::from_str(s).unwrap();
+        assert_eq!(nuc, Nuc::A)
     }
 }

@@ -18,6 +18,9 @@
 // be sure to exit with informative error messages if the input is invalid
 
 use structopt::StructOpt;
+use std::convert::TryFrom;
+use dna::packed::PackedDna;
+use dna::Nuc;
 
 /// Count the number of occurrences of each nucleotide in the provided DNA.
 #[derive(Debug, StructOpt)]
@@ -33,4 +36,26 @@ fn main() {
     let opts = Opts::from_args();
     let dna = opts.dna;
     println!("Input: {}", &dna);
+
+    let packed_dna = PackedDna::from_iterator(
+        dna.chars().map(|c| Nuc::try_from(c).expect("Invalid nucleotide")),
+    );
+
+    // Count occurrences of each nucleotide
+    let mut counts = [0; 4]; // A, C, G, T
+
+    for nuc in packed_dna {
+        match nuc {
+            Nuc::A => counts[0] += 1,
+            Nuc::C => counts[1] += 1,
+            Nuc::G => counts[2] += 1,
+            Nuc::T => counts[3] += 1,
+        }
+    }
+
+    // Print the results
+    println!("A: {}", counts[0]);
+    println!("C: {}", counts[1]);
+    println!("G: {}", counts[2]);
+    println!("T: {}", counts[3]);
 }
