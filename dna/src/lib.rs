@@ -72,10 +72,7 @@ pub mod packed {
     
     impl PackedDna {
         /// New Packed DNA
-        pub fn from_iterator<I>(iterator: I) -> Self
-        where
-            I: IntoIterator<Item = Nuc>,
-        {
+        pub fn from_iterator<I: IntoIterator<Item = Nuc>>(iterator: I) -> Self {
             Self(iterator.into_iter().collect())
         }
     
